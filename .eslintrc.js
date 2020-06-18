@@ -13,6 +13,7 @@ module.exports = {
     'plugin:jsx-a11y/recommended',
     'airbnb',
     'plugin:prettier/recommended',
+    'prettier/react',
   ],
   parserOptions: {
     ecmaFeatures: {
@@ -23,6 +24,8 @@ module.exports = {
   },
   plugins: ['react'],
   rules: {
+    'react/jsx-props-no-spreading': 'off',
     'react/jsx-filename-extension': [1, { extensions: ['.js', '.jsx'] }],
+    'react/prop-types': [2, { skipUndeclared: true }],
   },
 };

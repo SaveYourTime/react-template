@@ -1,68 +1,263 @@
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+# react-template
 
-## Available Scripts
+## Teck Stack
 
-In the project directory, you can run:
+- React
+- Redux
+- Redux Thunk
+- React Router
+- Styled Components
 
-### `yarn start`
+## Dependencies
 
-Runs the app in the development mode.<br />
-Open [http://localhost:3000](http://localhost:3000) to view it in the browser.
+- axios
 
-The page will reload if you make edits.<br />
-You will also see any lint errors in the console.
+## Tools
 
-### `yarn test`
+- eslint
+- prettier
 
-Launches the test runner in the interactive watch mode.<br />
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+---
 
-### `yarn build`
+## Folder Structure
 
-Builds the app for production to the `build` folder.<br />
-It correctly bundles React in production mode and optimizes the build for the best performance.
+#### ./src/
 
-The build is minified and the filenames include the hashes.<br />
-Your app is ready to be deployed!
+###### /actions
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+> Naming Convention: [xxxAction].js
 
-### `yarn eject`
+Includes:
 
-**Note: this is a one-way operation. Once you `eject`, you can’t go back!**
+1. actionCreators - `xxxAction.js`
+2. actionTypes - `types.js`
 
-If you aren’t satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+All the action types defined in `types.js`.
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you’re on your own.
+```javascript
+// userAction.js
+import { CREATE_USER, FETCH_USER_REQUEST, FETCH_USER_SUCCESS, FETCH_USER_FAILURE } from './types';
+import * as api from '../apis';
 
-You don’t have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn’t feel obligated to use this feature. However we understand that this tool wouldn’t be useful if you couldn’t customize it when you are ready for it.
+export const createUser = (user) => ({ type: CREATE_USER, payload: user });
 
-## Learn More
+export const fetchUser = () => async (dispatch) => {
+  dispatch({ type: FETCH_USER_REQUEST });
+  try {
+    const res = await api.fetchUser();
+    dispatch({ type: FETCH_USER_SUCCESS, payload: res });
+  } catch (error) {
+    dispatch({ type: FETCH_USER_FAILURE, payload: error.message });
+  }
+};
 
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
+// types.js
+export const CREATE_USER = 'CREATE_USER';
+export const FETCH_USER_REQUEST = 'FETCH_USER_REQUEST';
+export const FETCH_USER_SUCCESS = 'FETCH_USER_SUCCESS';
+export const FETCH_USER_FAILURE = 'FETCH_USER_FAILURE';
+```
 
-To learn React, check out the [React documentation](https://reactjs.org/).
+###### /apis
 
-### Code Splitting
+> Naming Convention: [endpoint].js
 
-This section has moved here: https://facebook.github.io/create-react-app/docs/code-splitting
+Various endpoints, use `axios` is prefered.  
+Such as: `index.js`, `stripe.js`, `youtube.js`, `unsplash.js`
 
-### Analyzing the Bundle Size
+```javascript
+import axios from 'axios';
 
-This section has moved here: https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size
+const api = axios.create({
+  baseURL: process.env.REACT_APP_API_HOST,
+  headers: {
+    Accept: 'application/json',
+    'Content-Type': 'application/json',
+  },
+});
 
-### Making a Progressive Web App
+export const fetchUser = () => api.get('/users').then((res) => res.data);
+```
 
-This section has moved here: https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app
+###### /assets (Not imported yet)
 
-### Advanced Configuration
+Keep all the `icons`, `images`, `sounds`, `videos` etc.
 
-This section has moved here: https://facebook.github.io/create-react-app/docs/advanced-configuration
+###### /components
 
-### Deployment
+> Naming Convention: /components/[page]/[Component].js
 
-This section has moved here: https://facebook.github.io/create-react-app/docs/deployment
+All the components that are being used in app, separate by `pages`.  
+If component needs to share between each others, put it into `shared`.  
+Such as: `LoginHeader.js`, `LoginContent.js`, `LoginFooter.js`
 
-### `yarn build` fails to minify
+```javascript
+import LoginHeader from '/components/login/LoginHeader';
+import LoginContent from '/components/login/LoginContent';
+import LoginFooter from '/components/login/LoginFooter';
+```
 
-This section has moved here: https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify
+###### /constants (Not imported yet)
+
+```javascript
+// storageKeys.js
+export const ACCESS_TOKEN = 'accessToken';
+export const ACCESS_TOKEN_EXPIRE_TIME = 'accessTokenExpireTime';
+export const USER_ID = 'userId';
+export const USER_EMAIL = 'userEmail';
+```
+
+###### /contexts
+
+> Naming Convention: [XxxContext].js
+
+The first letter of context should be `capitaized`, due to the naming convention.
+
+```javascript
+// ThemeContext.js
+const ThemeContext = React.createContext({
+  theme: 'light',
+  toggleTheme: () => {},
+});
+
+export const ThemeProvider = ({ children }) => {
+  const [theme, setTheme] = useState('light');
+
+  const toggleTheme = () => {
+    const nextTheme = theme === 'light' ? 'dark' : 'light';
+    setTheme(nextTheme);
+  };
+
+  return <ThemeContext.Provider value={{ theme, toggleTheme }}>{children}</ThemeContext.Provider>;
+};
+
+export default ThemeContext;
+```
+
+###### /hooks (Not imported yet)
+
+> Naming Convention: [useHooks].js
+
+All the custom hooks.
+
+Such as `useFetch.js`, `useWeather.js`
+
+###### /pages
+
+> Naming Convention: [XxxPage].js
+
+Such as `LoginPage.js`, `SettingsPage.js`
+
+###### /reducers
+
+> Naming Convention: [xxxReducer].js
+
+Such as: `authReducer.js`, `userReducer.js`
+
+```javascript
+// authReducer.js
+import { LOGIN_SUCCESS, LOGOUT_SUCCESS, LOGOUT_FAILURE } from '../actions/types';
+
+const initialState = {
+  id: null,
+  username: '',
+  token: null,
+};
+
+export default (state = initialState, action) => {
+  const { type, payload } = action;
+
+  switch (type) {
+    case LOGIN_SUCCESS:
+      return { id: payload.id, username: payload.username, token: payload.token };
+    case LOGOUT_SUCCESS:
+    case LOGOUT_FAILURE:
+      return initialState;
+    default:
+      return state;
+  }
+};
+```
+
+###### /services (Not imported yet)
+
+This usually holds the instances of several services.
+
+- push notifications
+- google tracker
+- etc.
+
+###### /styles
+
+> Naming Convention: [StyledPage].js
+
+Includes:
+
+1. `globalStyle.js`: Global styles.
+2. `index.js`: Styles that need to shared with multiple pages.
+3. `[StyledPage].js`: All the styles that each page needs.
+
+Such as : `StyledLogin.js`, `StyledSettings.js`
+
+```javascript
+// StyledSettings.js
+import styled from 'styled-components';
+
+const StyledSettings = {};
+
+StyledSettings.Header = styled.div`
+  padding: 26px;
+  align-items: center;
+  justify-content: center;
+`;
+
+StyledSettings.HeaderText = styled.h3`
+  margin-top: 6px;
+`;
+
+export default StyledSettings;
+```
+
+###### /translations (i18n)
+
+Includes:
+
+1. `index.js`: i18n helper functions
+2. `[locale].json`: translation file
+3. `TranslationProvider.js`: Need to wrap the whole app in `TranslationProvider.js`.
+
+Such as: `en.json`, `zh.json`
+
+> Naming Convention: [locale].json
+
+###### /utils
+
+All utility functions will be here.
+
+###### App.js
+
+Setup `Routes` and `Links` etc. here
+
+###### index.js
+
+> Entry Point
+
+Setup `Redux Store`, `ContextProvider` etc.
+
+```javascript
+import React from 'react';
+import ReactDOM from 'react-dom';
+import { Provider } from 'react-redux';
+import { ThemeProvider } from './contexts/ThemeContext';
+import store from './store';
+import App from './App';
+
+ReactDOM.render(
+  <Provider store={store}>
+    <ThemeProvider>
+      <App />
+    </ThemeProvider>
+  </Provider>,
+  document.getElementById('root'),
+);
+```
