@@ -20,6 +20,14 @@ const AuthPage = () => {
     window.location.href = `${process.env.REACT_APP_API_URL}/auth/google`;
   };
 
+  const loginWithLine = () => {
+    window.location.href = `https://access.line.me/oauth2/v2.1/authorize?response_type=code&client_id=${
+      process.env.REACT_APP_LINE_CHANNEL_ID
+    }&redirect_uri=${
+      process.env.REACT_APP_LINE_REDIRECT_URI
+    }&state=${Math.random()}&scope=profile%20openid%20email`;
+  };
+
   const responseFacebook = (response) => {
     const { accessToken, email } = response;
 
@@ -60,6 +68,9 @@ const AuthPage = () => {
       </button>
       <button type="button" onClick={loginWithGoogle}>
         Log in with Google (Redirect)
+      </button>
+      <button type="button" onClick={loginWithLine}>
+        <img src="https://img.icons8.com/color/240/000000/line-me.png" width="48" alt="" />
       </button>
       <FacebookLogin
         appId={process.env.REACT_APP_FACEBOOK_APP_ID}
