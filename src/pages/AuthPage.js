@@ -2,7 +2,7 @@ import React from 'react';
 import { useHistory, useLocation } from 'react-router-dom';
 import FacebookLogin from 'react-facebook-login';
 import GoogleLogin from 'react-google-login';
-import axios from 'axios';
+import { loginWithFB, loginWithGoogle } from '../apis';
 import fakeAuth from '../utils/fakeAuth';
 
 const AuthPage = () => {
@@ -14,10 +14,6 @@ const AuthPage = () => {
     fakeAuth.authenticate(() => {
       history.replace(from);
     });
-  };
-
-  const loginWithGoogle = () => {
-    window.location.href = `${process.env.REACT_APP_API_URL}/auth/google`;
   };
 
   const loginWithLine = () => {
@@ -32,26 +28,15 @@ const AuthPage = () => {
     const { accessToken, email } = response;
 
     if (accessToken && email) {
-      axios
-        .get(`http://localhost:3000/v1/auth/facebook?access_token=${accessToken}`, {
-          withCredentials: true,
-        })
-        .then(console.log)
-        .catch(console.log);
+      loginWithFB(accessToken).then(console.log).catch(console.log);
     } else {
       console.log('not calling api');
     }
   };
 
-  const responseGoogle = ({ code }) => {
-    console.log(code);
-    if (code) {
-      axios
-        .get(`http://localhost:3000/v1/auth/google/login?code=${code}`, {
-          withCredentials: true,
-        })
-        .then(console.log)
-        .catch(console.log);
+  const responseGoogle = ({ tokenId }) => {
+    if (tokenId) {
+      loginWithGoogle(tokenId).then(console.log).catch(console.log);
     } else {
       console.log('not calling api');
     }
@@ -65,9 +50,6 @@ const AuthPage = () => {
       </p>
       <button type="button" onClick={login}>
         Log in
-      </button>
-      <button type="button" onClick={loginWithGoogle}>
-        Log in with Google (Redirect)
       </button>
       <button type="button" onClick={loginWithLine}>
         <img src="https://img.icons8.com/color/240/000000/line-me.png" width="48" alt="" />
@@ -83,10 +65,8 @@ const AuthPage = () => {
       />
       <GoogleLogin
         clientId={process.env.REACT_APP_GOOGLE_CLIENT_ID}
-        responseType="code"
         onSuccess={responseGoogle}
         onFailure={responseGoogle}
-        cookiePolicy="single_host_origin"
       />
     </div>
   );
