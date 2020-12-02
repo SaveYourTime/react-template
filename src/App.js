@@ -9,26 +9,24 @@ import Auth from './pages/AuthPage';
 import Public from './pages/PublicPage';
 import Protected from './pages/ProtectedPage';
 
-const App = () => {
-  return (
-    <Router history={history}>
-      <GlobalStyle />
-      <Header />
-      <StyledContainer>
-        <Switch>
-          <Route exact path="/">
-            <Public />
-          </Route>
-          <Route path="/auth">
-            <Auth />
-          </Route>
-          <PrivateRoute path="/protected">
-            <Protected />
-          </PrivateRoute>
-        </Switch>
-      </StyledContainer>
-    </Router>
-  );
-};
+const App = () => (
+  <Router history={history}>
+    <GlobalStyle />
+    <Header />
+    <StyledContainer>
+      <Switch>
+        <Route exact path="/">
+          <Public />
+        </Route>
+        <Route path="/auth">
+          <Auth />
+        </Route>
+        <PrivateRoute path="/protected">
+          <Protected />
+        </PrivateRoute>
+      </Switch>
+    </StyledContainer>
+  </Router>
+);
 
 export default App;
