@@ -1,16 +1,16 @@
 module.exports = {
   env: {
     browser: true,
-    es2020: true,
+    es2021: true,
     jest: true,
   },
   extends: [
     'eslint:recommended',
-    'plugin:react/recommended',
-    'plugin:react-hooks/recommended',
     'plugin:import/errors',
     'plugin:import/warnings',
     'plugin:jsx-a11y/recommended',
+    'plugin:react/recommended',
+    'plugin:react-hooks/recommended',
     'airbnb',
     'plugin:prettier/recommended',
     'prettier/react',
@@ -19,14 +19,15 @@ module.exports = {
     ecmaFeatures: {
       jsx: true,
     },
-    ecmaVersion: 11,
+    ecmaVersion: 12,
     sourceType: 'module',
   },
-  plugins: ['react'],
+  plugins: ['react', 'prettier'],
   rules: {
+    'no-console': 'off',
+    'react/prop-types': [2, { skipUndeclared: true }],
     'react/jsx-props-no-spreading': 'off',
     'react/jsx-filename-extension': [1, { extensions: ['.js', '.jsx'] }],
-    'react/prop-types': [2, { skipUndeclared: true }],
-    'no-console': 'off',
+    'prettier/prettier': 'error',
   },
 };
